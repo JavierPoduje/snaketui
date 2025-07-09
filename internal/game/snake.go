@@ -3,17 +3,19 @@ package game
 import "slices"
 
 const (
-	DefaultSnakeX   = 4
-	DefaultSnakeY   = 4
-	DefaultSnakeDir = Right
+	DefaultSnakeX     = 4
+	DefaultSnakeY     = 4
+	DefaultSnakeDir   = Right
+	SpeedIncreateRate = 1.062
 )
 
 const DefaultSnakeSpeed = float64(3)
 
 type Snake struct {
-	Body  []Coord // head is at index 0
-	Dir   Direction
-	Speed float64
+	Body                []Coord // head is at index 0
+	Dir                 Direction
+	Speed               float64
+	increaseAfterMoving bool
 }
 
 func NewSnake() *Snake {
@@ -75,6 +77,12 @@ func (snake *Snake) Move(direction Direction) error {
 		}
 	}
 
+	if snake.increaseAfterMoving {
+		newBody = append(newBody, previousCoordinate)
+		snake.Speed *= SpeedIncreateRate
+		snake.increaseAfterMoving = false
+	}
+
 	snake.Body = newBody
 	snake.Dir = direction
 
@@ -93,4 +101,8 @@ func directions() [][]int {
 		{0, 1},  // Down
 		{-1, 0}, // Left
 	}
+}
+
+func (snake *Snake) Add() {
+	snake.increaseAfterMoving = true
 }

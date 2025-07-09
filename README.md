@@ -21,4 +21,5 @@ Las conoces...
 
 ## Cambios que se realizaron en esta rama
 
-- comenzar a mover el snake
+- desplegamos la manzana en una posición aleatoria
+- cada vez que el snake se la come, el snake incrementa su tamaño y la manzana se despliega en una nueva posición aleatoria

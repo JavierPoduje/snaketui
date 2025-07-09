@@ -1,16 +1,25 @@
 package game
 
+import "math/rand/v2"
+
+const (
+	DefaultAppleX = 2
+	DefaultAppleY = 2
+)
+
 type Game struct {
-	Snake    *Snake
+	Apple    *Coord
 	Canvas   *Canvas
 	NextMove Direction
+	Snake    *Snake
 }
 
 func NewGame(width, height int) *Game {
 	return &Game{
+		Apple:    &Coord{X: DefaultAppleX, Y: DefaultAppleY},
 		Canvas:   NewCanvas(width, height),
-		Snake:    NewSnake(),
 		NextMove: Up,
+		Snake:    NewSnake(),
 	}
 }
 
@@ -24,9 +33,31 @@ func (game *Game) Tick(direction Direction) {
 	if err != nil {
 		panic(err)
 	}
+
+	if game.Snake.Body[0] == *game.Apple {
+		game.eatApple()
+	}
 }
 
 func (game Game) nextMoveIsValid(dir Direction) bool {
 	nextHead := game.Snake.NextHead(dir)
 	return game.Snake.IsValidMove(dir) && game.Canvas.InBounds(nextHead)
+}
+
+func (game *Game) eatApple() {
+	game.Snake.Add()
+
+	game.Apple = game.getRandApple()
+	for game.Snake.Contains(*game.Apple) {
+		game.Apple = game.getRandApple()
+	}
+}
+
+func (game Game) getRandApple() *Coord {
+	width := game.Canvas.Width
+	height := game.Canvas.Height
+	return &Coord{
+		X: rand.IntN(height),
+		Y: rand.IntN(width),
+	}
 }

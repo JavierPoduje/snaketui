@@ -2,6 +2,12 @@ package ui
 
 import "github.com/charmbracelet/lipgloss"
 
+func Apple(char string) string {
+	return lipgloss.NewStyle().
+		Foreground(RedColor()).
+		Render(char)
+}
+
 func Canvas(width, height int, content string) string {
 	renderedCanvas := CanvasStyles(width, height).Render(content)
 

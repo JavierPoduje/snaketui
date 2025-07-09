@@ -21,8 +21,9 @@ const DefaultSnakeDir = game.Right
 const DefaultSnakeSpeed = float64(3)
 
 const (
-	SnakeChar   = "S"
+	AppleChar   = "A"
 	NeutralChar = "."
+	SnakeChar   = "S"
 )
 
 type TickMsg time.Time
@@ -90,13 +91,17 @@ func (m Model) BuildNextCanvasContent() string {
 
 	width := m.game.Canvas.Width
 	height := m.game.Canvas.Height
+
 	snake := m.game.Snake
+	apple := m.game.Apple
 
 	for Y := range width {
 		for X := range height {
 			coord := game.Coord{X: X, Y: Y}
 
-			if snake.Contains(coord) {
+			if apple.Equals(coord) {
+				strCanvas.WriteString(ui.Apple(AppleChar))
+			} else if snake.Contains(coord) {
 				snakeComponent := ui.Snake(SnakeChar, snake.IsHead(coord))
 				strCanvas.WriteString(snakeComponent)
 			} else {
