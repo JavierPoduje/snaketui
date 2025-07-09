@@ -1,6 +1,9 @@
 package model
 
 import (
+	"snaketui/internal/ui"
+	"strings"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -8,17 +11,21 @@ import (
 const (
 	DefaultTerminalWidth  = 40
 	DefaultTerminalHeight = 24
+	CanvasWidth           = 20
+	CanvasHeight          = 20
+)
+
+const (
+	NeutralChar = "."
 )
 
 type Model struct {
-	message        string
 	terminalHeight int
 	terminalWidth  int
 }
 
 func NewModel() Model {
 	return Model{
-		message:        "Snake TUI",
 		terminalHeight: DefaultTerminalHeight,
 		terminalWidth:  DefaultTerminalWidth,
 	}
@@ -43,10 +50,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	canvasContent := m.BuildNextCanvasContent()
+	canvas := ui.Canvas(CanvasWidth, CanvasHeight, canvasContent)
+
 	return lipgloss.Place(
 		m.terminalWidth, m.terminalHeight,
 		lipgloss.Center, lipgloss.Center,
-		lipgloss.JoinVertical(lipgloss.Center, m.message),
+		lipgloss.JoinVertical(lipgloss.Center, canvas),
 	)
 }
 
@@ -62,4 +72,16 @@ func (m *Model) HandleKeyPressed(msg tea.KeyMsg) (Model, tea.Cmd) {
 	default:
 		return *m, nil
 	}
+}
+
+func (m Model) BuildNextCanvasContent() string {
+	strCanvas := strings.Builder{}
+
+	for _ = range CanvasWidth {
+		for _ = range CanvasHeight {
+			strCanvas.WriteString(NeutralChar)
+		}
+	}
+
+	return strCanvas.String()
 }

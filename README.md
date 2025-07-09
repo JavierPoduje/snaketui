@@ -18,3 +18,9 @@ Las conoces...
 |<div align="center"><kbd>r</kbd></div>|Restart the game|
 |<div align="center"><kbd>?</kbd></div>|Toggle the help menu|
 |<div align="center"><kbd>ctrl+c / q</kbd></div>|Quit the game|
+
+## Cambios que se realizaron en esta rama
+
+- reemplazamos el mensaje inicial por el canvas del juego
+- agregamos nuestro primer component con sus estilos propios
+- agregamos el module `ui`, que sará util en los siguientes videos
