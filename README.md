@@ -21,6 +21,6 @@ Las conoces...
 
 ## Cambios que se realizaron en esta rama
 
-- reemplazamos el mensaje inicial por el canvas del juego
-- agregamos nuestro primer component con sus estilos propios
-- agregamos el module `ui`, que sará util en los siguientes videos
+- desplegamos el snake dentro del canvas
+- creamos el module `game`, donde se encontrará buena parte de la lógica del juego
+- creamos el component `snake` con sus propios estilos

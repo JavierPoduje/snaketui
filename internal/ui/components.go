@@ -20,3 +20,16 @@ func CanvasStyles(width, height int) lipgloss.Style {
 		BorderRight(true).
 		BorderBottom(true)
 }
+
+func Snake(char string, isHead bool) string {
+	snakeColor := func() lipgloss.TerminalColor {
+		if isHead {
+			return GreenColor()
+		}
+		return PrimaryTextColor()
+	}()
+
+	return lipgloss.NewStyle().
+		Foreground(snakeColor).
+		Render(char)
+}

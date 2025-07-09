@@ -1,6 +1,7 @@
 package model
 
 import (
+	"snaketui/internal/game"
 	"snaketui/internal/ui"
 	"strings"
 
@@ -16,16 +17,19 @@ const (
 )
 
 const (
+	SnakeChar   = "S"
 	NeutralChar = "."
 )
 
 type Model struct {
+	game           *game.Game
 	terminalHeight int
 	terminalWidth  int
 }
 
 func NewModel() Model {
 	return Model{
+		game:           game.NewGame(CanvasWidth, CanvasHeight),
 		terminalHeight: DefaultTerminalHeight,
 		terminalWidth:  DefaultTerminalWidth,
 	}
@@ -77,9 +81,20 @@ func (m *Model) HandleKeyPressed(msg tea.KeyMsg) (Model, tea.Cmd) {
 func (m Model) BuildNextCanvasContent() string {
 	strCanvas := strings.Builder{}
 
-	for _ = range CanvasWidth {
-		for _ = range CanvasHeight {
-			strCanvas.WriteString(NeutralChar)
+	width := m.game.Canvas.Width
+	height := m.game.Canvas.Height
+	snake := m.game.Snake
+
+	for Y := range width {
+		for X := range height {
+			coord := game.Coord{X: X, Y: Y}
+
+			if snake.Contains(coord) {
+				snakeComponent := ui.Snake(SnakeChar, snake.IsHead(coord))
+				strCanvas.WriteString(snakeComponent)
+			} else {
+				strCanvas.WriteString(NeutralChar)
+			}
 		}
 	}
 
