@@ -11,3 +11,8 @@ func NewCanvas(width, height int) *Canvas {
 		Height: height,
 	}
 }
+
+func (canvas *Canvas) InBounds(coord Coord) bool {
+	return coord.X >= 0 && coord.X < canvas.Width &&
+		coord.Y >= 0 && coord.Y < canvas.Height
+}

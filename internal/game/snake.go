@@ -3,12 +3,17 @@ package game
 import "slices"
 
 const (
-	DefaultSnakeX = 4
-	DefaultSnakeY = 4
+	DefaultSnakeX   = 4
+	DefaultSnakeY   = 4
+	DefaultSnakeDir = Right
 )
 
+const DefaultSnakeSpeed = float64(3)
+
 type Snake struct {
-	Body []Coord // head is at index 0
+	Body  []Coord // head is at index 0
+	Dir   Direction
+	Speed float64
 }
 
 func NewSnake() *Snake {
@@ -17,7 +22,9 @@ func NewSnake() *Snake {
 	}
 
 	return &Snake{
-		Body: snakeBody,
+		Body:  snakeBody,
+		Dir:   DefaultSnakeDir,
+		Speed: DefaultSnakeSpeed,
 	}
 }
 
@@ -31,4 +38,59 @@ func (snake Snake) Head() Coord {
 
 func (snake *Snake) IsHead(coordinate Coord) bool {
 	return snake.Head().Equals(coordinate)
+}
+
+func (snake *Snake) NextHead(direction Direction) Coord {
+	offset := directions()[direction]
+	return Coord{
+		X: snake.Head().X + offset[0],
+		Y: snake.Head().Y + offset[1],
+	}
+}
+
+func (snake *Snake) Move(direction Direction) error {
+	if direction < 0 && direction >= 4 {
+		panic("invalid direction")
+	}
+
+	if snake.Dir.IsOpposite(direction) {
+		return nil
+	}
+
+	var previousCoordinate Coord
+	offset := directions()[direction]
+
+	newBody := make([]Coord, len(snake.Body))
+	for i, snakeCoordinate := range snake.Body {
+		if i == 0 {
+			previousCoordinate = snakeCoordinate
+			newBody[i] = Coord{
+				snakeCoordinate.X + offset[0],
+				snakeCoordinate.Y + offset[1],
+			}
+		} else {
+			tempCoord := snakeCoordinate
+			newBody[i] = previousCoordinate
+			previousCoordinate = tempCoord
+		}
+	}
+
+	snake.Body = newBody
+	snake.Dir = direction
+
+	return nil
+}
+
+func (snake *Snake) IsValidMove(direction Direction) bool {
+	nextHead := snake.NextHead(direction)
+	return !snake.Contains(nextHead)
+}
+
+func directions() [][]int {
+	return [][]int{
+		{0, -1}, // Up
+		{1, 0},  // Right
+		{0, 1},  // Down
+		{-1, 0}, // Left
+	}
 }

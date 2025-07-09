@@ -21,6 +21,4 @@ Las conoces...
 
 ## Cambios que se realizaron en esta rama
 
-- desplegamos el snake dentro del canvas
-- creamos el module `game`, donde se encontrará buena parte de la lógica del juego
-- creamos el component `snake` con sus propios estilos
+- comenzar a mover el snake
