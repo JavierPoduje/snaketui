@@ -73,7 +73,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	canvasContent := m.BuildNextCanvasContent()
-	canvas := ui.Canvas(CanvasWidth, CanvasHeight, canvasContent)
+	canvas := ui.Canvas(CanvasWidth, CanvasHeight, m.game.State, canvasContent)
 
 	return lipgloss.Place(
 		m.terminalWidth, m.terminalHeight,
@@ -114,7 +114,22 @@ func (m Model) BuildNextCanvasContent() string {
 }
 
 func (m *Model) HandleTick() (Model, tea.Cmd) {
+	if m.game.State == game.Paused {
+		return *m, nil
+	}
+
 	m.game.Tick(m.nextSnakeMove)
 
+	if m.game.State == game.GameOver {
+		return *m, nil
+	}
+
 	return *m, m.tick(m.game.Snake.Speed)
+}
+
+func RestartModel(width, height int) Model {
+	m := NewModel()
+	m.terminalWidth = width
+	m.terminalHeight = height
+	return m
 }

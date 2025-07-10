@@ -7,11 +7,20 @@ const (
 	DefaultAppleY = 2
 )
 
+type GameState int
+
+const (
+	Running = iota
+	GameOver
+	Paused
+)
+
 type Game struct {
 	Apple    *Coord
 	Canvas   *Canvas
 	NextMove Direction
 	Snake    *Snake
+	State    GameState
 }
 
 func NewGame(width, height int) *Game {
@@ -20,10 +29,16 @@ func NewGame(width, height int) *Game {
 		Canvas:   NewCanvas(width, height),
 		NextMove: Up,
 		Snake:    NewSnake(),
+		State:    Running,
 	}
 }
 
 func (game *Game) Tick(direction Direction) {
+	if !game.nextMoveIsValid(direction) {
+		game.State = GameOver
+		return
+	}
+
 	if !game.nextMoveIsValid(direction) {
 		return
 	}

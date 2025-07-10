@@ -12,6 +12,12 @@ func (m *Model) HandleKeyPressed(msg tea.KeyMsg) (Model, tea.Cmd) {
 	// Game actions
 	case slices.Contains([]string{"q", "esc", "ctrl+c"}, msg.String()):
 		return m.handleQuit()
+	case slices.Contains([]string{"p"}, msg.String()):
+		return m.handlePause()
+	case slices.Contains([]string{"r"}, msg.String()):
+		return m.handleRestart()
+
+	// directions
 	case slices.Contains([]string{"up", "k"}, msg.String()):
 		return m.handleKeyUp()
 	case slices.Contains([]string{"right", "l"}, msg.String()):
@@ -22,6 +28,32 @@ func (m *Model) HandleKeyPressed(msg tea.KeyMsg) (Model, tea.Cmd) {
 		return m.handleKeyLeft()
 	default:
 		return *m, nil
+	}
+}
+
+func (m *Model) handlePause() (Model, tea.Cmd) {
+	switch m.game.State {
+	case game.Running:
+		m.game.State = game.Paused
+	case game.Paused:
+		m.game.State = game.Running
+		return *m, m.tick(m.game.Snake.Speed)
+	default:
+		// don't do nothing here
+	}
+	return *m, nil
+}
+
+func (m *Model) handleRestart() (Model, tea.Cmd) {
+	switch m.game.State {
+	case game.Paused:
+		m.game.State = game.Running
+		return *m, m.tick(m.game.Snake.Speed)
+	case game.GameOver:
+		m.game.State = game.Running
+		return RestartModel(m.terminalWidth, m.terminalHeight), m.tick(m.game.Snake.Speed)
+	default:
+		panic("Unreachable state during restart")
 	}
 }
 

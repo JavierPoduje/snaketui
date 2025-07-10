@@ -13,3 +13,7 @@ func PrimaryTextColor() lipgloss.Color {
 func RedColor() lipgloss.Color {
 	return lipgloss.Color("#BE5845")
 }
+
+func OrangeColor() lipgloss.Color {
+	return lipgloss.Color("#FFD0A5")
+}
