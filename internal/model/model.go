@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -33,6 +34,8 @@ type TickMsg time.Time
 type Model struct {
 	db             db.DB
 	game           *game.Game
+	help           help.Model
+	keys           keyMap
 	nextSnakeMove  game.Direction
 	scores         []int
 	terminalHeight int
@@ -44,6 +47,8 @@ func NewModel() Model {
 	return Model{
 		db:             db,
 		game:           game.NewGame(CanvasWidth, CanvasHeight),
+		help:           help.New(),
+		keys:           keys,
 		nextSnakeMove:  DefaultSnakeDir,
 		scores:         db.GetScores(),
 		terminalHeight: DefaultTerminalHeight,
@@ -84,12 +89,13 @@ func (m Model) View() string {
 
 	// components
 	canvas := ui.Canvas(CanvasWidth, CanvasHeight, m.game.State, canvasContent)
+	footer := ui.HelpContainer(m.help.View(m.keys))
 	statsCard := ui.StatsCard(stats)
 	historicScoresCard := ui.HistoricScoresCard(m.scores)
 
 	infoCards := lipgloss.JoinVertical(lipgloss.Center, statsCard, historicScoresCard)
 	contentSection := lipgloss.JoinHorizontal(lipgloss.Top, canvas, infoCards)
-	content := lipgloss.JoinVertical(lipgloss.Right, contentSection)
+	content := lipgloss.JoinVertical(lipgloss.Right, contentSection, footer)
 
 	return lipgloss.Place(
 		m.terminalWidth, m.terminalHeight,

@@ -3,28 +3,30 @@ package model
 import (
 	"snaketui/internal/game"
 
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"slices"
 )
 
 func (m *Model) HandleKeyPressed(msg tea.KeyMsg) (Model, tea.Cmd) {
 	switch {
 	// Game actions
-	case slices.Contains([]string{"q", "esc", "ctrl+c"}, msg.String()):
+	case key.Matches(msg, m.keys.Quit):
 		return m.handleQuit()
-	case slices.Contains([]string{"p"}, msg.String()):
+	case key.Matches(msg, m.keys.Pause):
 		return m.handlePause()
-	case slices.Contains([]string{"r"}, msg.String()):
+	case key.Matches(msg, m.keys.Restart):
 		return m.handleRestart()
+	case key.Matches(msg, m.keys.Help):
+		return m.handleHelp()
 
 	// directions
-	case slices.Contains([]string{"up", "k"}, msg.String()):
+	case key.Matches(msg, m.keys.Up):
 		return m.handleKeyUp()
-	case slices.Contains([]string{"right", "l"}, msg.String()):
+	case key.Matches(msg, m.keys.Right):
 		return m.handleKeyRight()
-	case slices.Contains([]string{"down", "j"}, msg.String()):
+	case key.Matches(msg, m.keys.Down):
 		return m.handleKeyDown()
-	case slices.Contains([]string{"left", "h"}, msg.String()):
+	case key.Matches(msg, m.keys.Left):
 		return m.handleKeyLeft()
 	default:
 		return *m, nil
@@ -87,4 +89,9 @@ func (m *Model) handleKeyLeft() (Model, tea.Cmd) {
 
 func (m *Model) handleQuit() (Model, tea.Cmd) {
 	return *m, tea.Quit
+}
+
+func (m *Model) handleHelp() (Model, tea.Cmd) {
+	m.help.ShowAll = !m.help.ShowAll
+	return *m, nil
 }

@@ -19,6 +19,10 @@ func Canvas(width, height int, state game.GameState, content string) string {
 	return lipgloss.JoinVertical(lipgloss.Left, CanvasLabel(state), renderedCanvas)
 }
 
+func HelpContainer(keysAsString string) string {
+	return HelpContainerStyles().Render(keysAsString)
+}
+
 func CanvasLabel(state game.GameState) string {
 	var label string
 	switch state {

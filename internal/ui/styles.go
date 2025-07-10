@@ -58,3 +58,10 @@ func HistoricScoresStyles() lipgloss.Style {
 		Width(22).
 		Height(12)
 }
+
+func HelpContainerStyles() lipgloss.Style {
+	return lipgloss.NewStyle().
+		Height(4).
+		Width(35).
+		MarginTop(1)
+}
