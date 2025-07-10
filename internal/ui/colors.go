@@ -17,3 +17,11 @@ func RedColor() lipgloss.Color {
 func OrangeColor() lipgloss.Color {
 	return lipgloss.Color("#FFD0A5")
 }
+
+func SecondaryTextColor() lipgloss.Color {
+	return lipgloss.Color("#C6BFA8")
+}
+
+func GrayColor() lipgloss.Color {
+	return lipgloss.Color("#b1ab99")
+}

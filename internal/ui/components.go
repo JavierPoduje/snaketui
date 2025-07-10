@@ -81,3 +81,33 @@ func Snake(char string, isHead bool) string {
 		Foreground(snakeColor).
 		Render(char)
 }
+
+func StatsCard(stats [][]string) string {
+	title := "Stats"
+
+	var headersColumn []string
+	for _, stat := range stats {
+		header := StatHeaderStyles().Render(stat[0])
+		headersColumn = append(headersColumn, header)
+	}
+	styledHeader := lipgloss.JoinVertical(lipgloss.Left, headersColumn...)
+
+	var valuesColumn []string
+	for _, stat := range stats {
+		value := StatValueStyles().Render(stat[1])
+		valuesColumn = append(valuesColumn, value)
+	}
+	styledValues := lipgloss.JoinVertical(lipgloss.Right, valuesColumn...)
+
+	return StatsStyles().Render(
+		lipgloss.JoinVertical(
+			lipgloss.Center,
+			TitleStyles().Render(title),
+			lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				styledHeader,
+				styledValues,
+			),
+		),
+	)
+}

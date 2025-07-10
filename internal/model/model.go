@@ -3,6 +3,7 @@ package model
 import (
 	"snaketui/internal/game"
 	"snaketui/internal/ui"
+	"strconv"
 	"strings"
 	"time"
 
@@ -73,12 +74,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	canvasContent := m.BuildNextCanvasContent()
+	stats := m.BuildNextStatsContent()
+
+	// components
 	canvas := ui.Canvas(CanvasWidth, CanvasHeight, m.game.State, canvasContent)
+	statsCard := ui.StatsCard(stats)
+
+	infoCards := lipgloss.JoinVertical(lipgloss.Center, statsCard)
+	contentSection := lipgloss.JoinHorizontal(lipgloss.Top, canvas, infoCards)
+	content := lipgloss.JoinVertical(lipgloss.Right, contentSection)
 
 	return lipgloss.Place(
 		m.terminalWidth, m.terminalHeight,
 		lipgloss.Center, lipgloss.Center,
-		lipgloss.JoinVertical(lipgloss.Center, canvas),
+		content,
 	)
 }
 
@@ -132,4 +141,11 @@ func RestartModel(width, height int) Model {
 	m.terminalWidth = width
 	m.terminalHeight = height
 	return m
+}
+
+func (model Model) BuildNextStatsContent() [][]string {
+	return [][]string{
+		{"Eaten apples:", strconv.Itoa(model.game.Stats.EatenApples)},
+		{"Score:", model.game.Stats.RoundedScoreAsString()},
+	}
 }

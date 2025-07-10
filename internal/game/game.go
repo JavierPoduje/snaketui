@@ -21,6 +21,7 @@ type Game struct {
 	NextMove Direction
 	Snake    *Snake
 	State    GameState
+	Stats    *Stats
 }
 
 func NewGame(width, height int) *Game {
@@ -30,6 +31,7 @@ func NewGame(width, height int) *Game {
 		NextMove: Up,
 		Snake:    NewSnake(),
 		State:    Running,
+		Stats:    NewStats(),
 	}
 }
 
@@ -61,6 +63,8 @@ func (game Game) nextMoveIsValid(dir Direction) bool {
 
 func (game *Game) eatApple() {
 	game.Snake.Add()
+	game.Stats.EatApple()
+	game.Stats.UpdateScore(game.Snake.Speed)
 
 	game.Apple = game.getRandApple()
 	for game.Snake.Contains(*game.Apple) {
