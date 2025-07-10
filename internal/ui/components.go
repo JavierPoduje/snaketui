@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"snaketui/internal/game"
 
 	"github.com/charmbracelet/lipgloss"
@@ -107,6 +108,40 @@ func StatsCard(stats [][]string) string {
 				lipgloss.Top,
 				styledHeader,
 				styledValues,
+			),
+		),
+	)
+}
+
+func HistoricScoresCard(scores []int) string {
+	title := "History"
+
+	numberOfScoresToDisplay := 10
+
+	var scorePosition []string
+	var scoreValues []string
+	for i := 0; i < numberOfScoresToDisplay; i++ {
+		posStr := fmt.Sprintf("%d. ", i+1)
+
+		scoreStr := ""
+		if i < len(scores) {
+			scoreStr = fmt.Sprintf("%d", scores[i])
+		}
+
+		scorePosition = append(scorePosition, HistoricScoresPositionStyles().Render(posStr))
+		scoreValues = append(scoreValues, HistoricScoresValueStyles().Render(scoreStr))
+	}
+	styledPositions := lipgloss.JoinVertical(lipgloss.Right, scorePosition...)
+	stylesScores := lipgloss.JoinVertical(lipgloss.Right, scoreValues...)
+
+	return HistoricScoresStyles().Render(
+		lipgloss.JoinVertical(
+			lipgloss.Center,
+			TitleStyles().Render(title),
+			lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				styledPositions,
+				stylesScores,
 			),
 		),
 	)

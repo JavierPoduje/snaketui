@@ -1,6 +1,7 @@
 package model
 
 import (
+	"snaketui/internal/db"
 	"snaketui/internal/game"
 	"snaketui/internal/ui"
 	"strconv"
@@ -30,17 +31,22 @@ const (
 type TickMsg time.Time
 
 type Model struct {
+	db             db.DB
 	game           *game.Game
 	nextSnakeMove  game.Direction
+	scores         []int
 	terminalHeight int
 	terminalWidth  int
 }
 
 func NewModel() Model {
+	db := db.NewDB()
 	return Model{
+		db:             db,
 		game:           game.NewGame(CanvasWidth, CanvasHeight),
-		terminalHeight: DefaultTerminalHeight,
 		nextSnakeMove:  DefaultSnakeDir,
+		scores:         db.GetScores(),
+		terminalHeight: DefaultTerminalHeight,
 		terminalWidth:  DefaultTerminalWidth,
 	}
 }
@@ -79,8 +85,9 @@ func (m Model) View() string {
 	// components
 	canvas := ui.Canvas(CanvasWidth, CanvasHeight, m.game.State, canvasContent)
 	statsCard := ui.StatsCard(stats)
+	historicScoresCard := ui.HistoricScoresCard(m.scores)
 
-	infoCards := lipgloss.JoinVertical(lipgloss.Center, statsCard)
+	infoCards := lipgloss.JoinVertical(lipgloss.Center, statsCard, historicScoresCard)
 	contentSection := lipgloss.JoinHorizontal(lipgloss.Top, canvas, infoCards)
 	content := lipgloss.JoinVertical(lipgloss.Right, contentSection)
 
@@ -130,6 +137,10 @@ func (m *Model) HandleTick() (Model, tea.Cmd) {
 	m.game.Tick(m.nextSnakeMove)
 
 	if m.game.State == game.GameOver {
+		if m.game.Stats.ScoreAsInt() > 0 {
+			m.db.SaveScore(m.game.Stats.ScoreAsInt())
+			m.scores = m.db.GetScores()
+		}
 		return *m, nil
 	}
 
